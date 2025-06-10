@@ -152,6 +152,7 @@ func init() {
 	rootCmd.Flags().StringVar(&config.POP3AuthFile, "pop3-auth-file", config.POP3AuthFile, "A password file for POP3 server authentication (enables POP3 server)")
 	rootCmd.Flags().StringVar(&config.POP3TLSCert, "pop3-tls-cert", config.POP3TLSCert, "Optional TLS certificate for POP3 server - requires pop3-tls-key")
 	rootCmd.Flags().StringVar(&config.POP3TLSKey, "pop3-tls-key", config.POP3TLSKey, "Optional TLS key for POP3 server - requires pop3-tls-cert")
+	rootCmd.Flags().StringVar(&config.POP3AuthOdooDomain, "pop3-auth-odoo-domain", config.POP3AuthOdooDomain, "Enable Odoo special process : user auth search only for this message")
 
 	// Tagging
 	rootCmd.Flags().StringVarP(&config.CLITagsArg, "tag", "t", config.CLITagsArg, "Tag new messages matching filters")
@@ -365,6 +366,7 @@ func initConfigFromEnv() {
 	}
 	config.POP3TLSCert = os.Getenv("MP_POP3_TLS_CERT")
 	config.POP3TLSKey = os.Getenv("MP_POP3_TLS_KEY")
+	config.POP3AuthOdooDomain = os.Getenv("MP_POP3_AUTH_ODOO_DOMAIN")
 
 	// Tagging
 	config.CLITagsArg = os.Getenv("MP_TAG")

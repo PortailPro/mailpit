@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/axllent/mailpit/config"
 	"github.com/axllent/mailpit/internal/auth"
 	"github.com/axllent/mailpit/internal/logger"
 	"github.com/axllent/mailpit/internal/storage"
@@ -13,7 +14,11 @@ import (
 )
 
 func authUser(username, password string) bool {
-	return auth.POP3Credentials.Match(username, password)
+	if config.POP3AuthOdooDomain != "" {
+		return strings.Contains(username, "@"+config.POP3AuthOdooDomain) && username == password
+	} else {
+		return auth.POP3Credentials.Match(username, password)
+	}
 }
 
 // Send a response with debug logging
@@ -45,6 +50,29 @@ func getMessages() ([]message, error) {
 		msg.ID = m.ID
 		msg.Size = m.Size
 		messages = append(messages, msg)
+	}
+
+	return messages, nil
+}
+
+func getOdooMessages(user string) ([]message, error) {
+	messages := []message{}
+	searchs := []string{
+		strings.Replace(user, "@"+config.POP3AuthOdooDomain, "@", 1),
+		strings.Replace(user, "@"+config.POP3AuthOdooDomain, "+", 1),
+	}
+	for _, search := range searchs {
+		list, _, err := storage.Search("to:"+search, "", 0, 0, 100)
+		if err != nil {
+			return messages, err
+		}
+
+		for _, m := range list {
+			msg := message{}
+			msg.ID = m.ID
+			msg.Size = m.Size
+			messages = append(messages, msg)
+		}
 	}
 
 	return messages, nil

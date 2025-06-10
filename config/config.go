@@ -176,6 +176,8 @@ var (
 	// POP3TLSKey TLS certificate key
 	POP3TLSKey string
 
+	POP3AuthOdooDomain string
+
 	// EnableSpamAssassin must be either <host>:<port> or "postmark"
 	EnableSpamAssassin string
 
@@ -196,7 +198,7 @@ var (
 	PrometheusListen string
 
 	// Version is the default application version, updated on release
-	Version = "dev"
+	Version = "dev-portailpro-fork"
 
 	// Repo on Github for updater
 	Repo = "axllent/mailpit"
@@ -485,6 +487,12 @@ func VerifyConfig() error {
 		}
 
 		if err := auth.SetPOP3Auth(string(b)); err != nil {
+			return err
+		}
+	}
+	if POP3AuthOdooDomain != "" {
+		err := domainCheck(POP3AuthOdooDomain)
+		if err != nil {
 			return err
 		}
 	}
