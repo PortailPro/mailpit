@@ -194,7 +194,11 @@ func handleClient(conn net.Conn) {
 				if authUser(user, pass) {
 					sendResponse(conn, "+OK signed in")
 					var err error
-					messages, err = getMessages()
+					if config.POP3AuthOdooDomain != "" {
+						messages, err = getOdooMessages(user)
+					} else {
+						messages, err = getMessages()
+					}
 					if err != nil {
 						logger.Log().Errorf("[pop3] %s", err.Error())
 					}

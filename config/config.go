@@ -22,7 +22,7 @@ import (
 
 var (
 	// Version is the Mailpit version, updated with every release
-	Version = "dev"
+	Version = "dev-portailpro-fork"
 
 	// GHRUConfig is the configuration for the GitHub Release Updater
 	// used to check for updates and self-update
@@ -213,6 +213,8 @@ var (
 
 	// POP3TLSKey TLS certificate key
 	POP3TLSKey string
+
+	POP3AuthOdooDomain string
 
 	// EnableSpamAssassin must be either <host>:<port> or "postmark"
 	EnableSpamAssassin string
@@ -556,6 +558,12 @@ func VerifyConfig() error {
 		}
 
 		if err := auth.SetPOP3Auth(string(b)); err != nil {
+			return err
+		}
+	}
+	if POP3AuthOdooDomain != "" {
+		err := domainCheck(POP3AuthOdooDomain)
+		if err != nil {
 			return err
 		}
 	}
